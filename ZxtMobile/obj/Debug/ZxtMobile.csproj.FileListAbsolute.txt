@@ -1,0 +1,5 @@
+D:\wukaiproject\ZxtMobile\ZxtMobile\bin\ZxtMobile.dll
+D:\wukaiproject\ZxtMobile\ZxtMobile\bin\ZxtMobile.pdb
+D:\wukaiproject\ZxtMobile\ZxtMobile\obj\Debug\ResolveAssemblyReference.cache
+D:\wukaiproject\ZxtMobile\ZxtMobile\obj\Debug\ZxtMobile.dll
+D:\wukaiproject\ZxtMobile\ZxtMobile\obj\Debug\ZxtMobile.pdb
