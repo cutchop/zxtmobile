@@ -34,12 +34,12 @@ namespace ZxtMobile
                 {
                     try
                     {
-                        sql = string.Format("select * from zxt_app.coach_info where coach_school_id='{0}' and coach_id='{1}'", school, card);
+                        sql = string.Format("select a.*,b.coach_time from zxt_app.coach_info a left join zxt_app.coach_card b on a.coach_id=b.coach_id where a.coach_school_id='{0}' and a.coach_id='{1}'", school, card);
                         ds = db.ExecuteReturnDataSet(sql);
                         if (ds.Tables[0].Rows.Count > 0)
                         {
                             DataRow dr = ds.Tables[0].Rows[0];
-                            context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}", card, dr["code"], dr["name"], dr["id_card_no"]));
+                            context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}|{4}", card, dr["coach_time"], dr["code"], dr["name"], dr["id_card_no"]));
                         }
                         else
                         {

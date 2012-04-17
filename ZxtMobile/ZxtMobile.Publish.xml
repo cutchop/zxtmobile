@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
   <publishProfile publishUrl="F:\zxtmobile_publish" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="配置文件1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
-    <file relUrl="blindspot.ashx" publishTime="04/16/2012 17:12:44" />
-    <file relUrl="bin/ZxtMobile.pdb" publishTime="04/16/2012 17:22:46" />
+    <file relUrl="bin/ZxtMobile.dll" publishTime="04/17/2012 16:49:54" />
+    <file relUrl="bin/ZxtMobile.pdb" publishTime="04/17/2012 16:49:54" />
     <file relUrl="upload.ashx" publishTime="04/11/2012 14:27:02" />
     <file relUrl="getdeviceinfo.ashx" publishTime="04/09/2012 15:44:51" />
     <file relUrl="getcoachinfo.ashx" publishTime="04/12/2012 13:45:44" />
-    <file relUrl="Web.config" publishTime="04/16/2012 17:27:35" />
-    <file relUrl="getstudentinfo.ashx" publishTime="04/12/2012 14:09:08" />
+    <file relUrl="Web.config" publishTime="04/17/2012 16:50:00" />
+    <file relUrl="WebForm1.aspx" publishTime="04/09/2012 16:07:53" />
     <file relUrl="photo.ashx" publishTime="04/13/2012 17:54:11" />
     <file relUrl="test.ashx" publishTime="04/11/2012 11:57:42" />
-    <file relUrl="WebForm1.aspx" publishTime="04/09/2012 16:07:53" />
+    <file relUrl="blindspot.ashx" publishTime="04/16/2012 17:12:44" />
     <file relUrl="usedata.ashx" publishTime="04/16/2012 14:59:08" />
-    <file relUrl="bin/ZxtMobile.dll" publishTime="04/16/2012 17:22:46" />
+    <file relUrl="getstudentinfo.ashx" publishTime="04/12/2012 14:09:08" />
   </publishProfile>
 </publishData>
