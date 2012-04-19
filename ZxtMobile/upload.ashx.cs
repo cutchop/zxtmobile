@@ -24,6 +24,7 @@ namespace ZxtMobile
             string student = context.Request["student"];
             string starttime = context.Request["starttime"];
             string balance = context.Request["balance"];
+            string subject = context.Request["subject"];
 
             IDataBase db = DBConfig.GetDBObjcet();
             string sql = string.Format("select * from device_info where device_id='{0}' and device_session='{1}'", deviceID, session);
@@ -40,7 +41,7 @@ namespace ZxtMobile
                     try
                     {
                         if (double.Parse(lng) == 0 && double.Parse(lat) == 0)//没有经纬度时使用上一次的值
-                        {                            
+                        {
                             sql = string.Format("insert into device_his_track(device_id,lon,lat,v_lon,v_lat,logintime) select device_id,lon,lat,lon as v_lon,lat as v_lat,sysdate as logintime from device_state where device_id='{0}'", deviceID);
                             db.ExecuteNonQuery(sql);
                             sql = string.Format("update device_state set logintime=sysdate where device_id='{0}'", deviceID);
@@ -53,26 +54,29 @@ namespace ZxtMobile
                             sql = string.Format("update device_state set lon={0},lat={1},logintime=sysdate where device_id='{2}'", lng, lat, deviceID);
                             db.ExecuteNonQuery(sql);
                         }
-                        try
+                        if (!string.IsNullOrEmpty(student))
                         {
-                            if (student.Equals(coach))
+                            try
                             {
-                                student = "1" + student;
+                                if (student.Equals(coach))
+                                {
+                                    student = "1" + student;
+                                }
+                                else
+                                {
+                                    student = "2" + student;
+                                }
+                                sql = string.Format("update zxt_app.jx_device_status set mode_type='{0}',last_update_time=sysdate,cur_coach_ic_id='{1}',cur_stu_ic_id='{2}',cur_stu_starttime={3},cur_stu_balance={4},subject='{5}' where device_id='{6}'"
+                                    , mode == "1" ? "非计费模式" : "计费模式", coach, student, string.IsNullOrEmpty(starttime) ? "null" : "to_date('" + starttime + "','yyyy-mm-dd hh24:mi:ss')", string.IsNullOrEmpty(balance) ? "null" : balance, subject, deviceID);
+                                db.ExecuteNonQuery(sql);
                             }
-                            else
-                            {
-                                student = "2" + student;
-                            }
-                            sql = string.Format("update zxt_app.jx_device_status set mode_type='{0}',last_update_time=sysdate,cur_coach_ic_id='{1}',cur_stu_ic_id='{2}',cur_stu_starttime={3},cur_stu_balance={4} where device_id='{5}'"
-                                , mode == "1" ? "非计费模式" : "计费模式", coach, student, string.IsNullOrEmpty(starttime) ? "null" : "to_date('" + starttime + "','yyyy-mm-dd hh24:mi:ss')", string.IsNullOrEmpty(balance) ? "null" : balance, deviceID);
-                            db.ExecuteNonQuery(sql);
+                            catch { }
                         }
-                        catch { }
                         context.Response.Write("success");
                     }
                     catch
                     {
-                        context.Response.Write("数据库异常");
+                        context.Response.Write("数据库异常" + sql);
                     }
                 }
                 else
