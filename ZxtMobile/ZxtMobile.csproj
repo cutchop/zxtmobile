@@ -68,6 +68,9 @@
     <Compile Include="getstudentinfo.ashx.cs">
       <DependentUpon>getstudentinfo.ashx</DependentUpon>
     </Compile>
+    <Compile Include="gettts.ashx.cs">
+      <DependentUpon>gettts.ashx</DependentUpon>
+    </Compile>
     <Compile Include="photo.ashx.cs">
       <DependentUpon>photo.ashx</DependentUpon>
     </Compile>
@@ -88,6 +91,9 @@
     </Compile>
     <Compile Include="WebForm1.aspx.designer.cs">
       <DependentUpon>WebForm1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="gettimeandmi.ashx.cs">
+      <DependentUpon>gettimeandmi.ashx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +119,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="blindspot.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="gettimeandmi.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="gettts.ashx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

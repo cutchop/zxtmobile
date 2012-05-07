@@ -14,51 +14,67 @@ namespace ZxtMobile
         public void ProcessRequest(HttpContext context)
         {
             context.Response.ContentType = "text/plain";
-
-            string deviceID = context.Request["deviceid"];
-            string session = context.Request["session"];
-            string card = context.Request["card"];
-            string school = context.Request["school"];
-
-            IDataBase db = DBConfig.GetDBObjcet();
-            string sql = string.Format("select * from device_info where device_id='{0}' and device_session='{1}'", deviceID, session);
-            DataSet ds = null;
-            try
+            if (context.Request["ver"] != System.Configuration.ConfigurationManager.AppSettings["apkVersion"])
             {
-                ds = db.ExecuteReturnDataSet(sql);
+                context.Response.Write("version_error");
             }
-            catch { }
-            if (ds != null && ds.Tables[0] != null)
+            else
             {
-                if (ds.Tables[0].Rows.Count > 0)
+                string deviceID = context.Request["deviceid"];
+                string session = context.Request["session"];
+                string card = context.Request["card"];
+                string school = context.Request["school"];
+
+                IDataBase db = DBConfig.GetDBObjcet();
+                string sql = string.Format("select * from device_info where device_id='{0}' and device_session='{1}'", deviceID, session);
+                DataSet ds = null;
+                try
                 {
-                    try
+                    ds = db.ExecuteReturnDataSet(sql);
+                }
+                catch { }
+                if (ds != null && ds.Tables[0] != null)
+                {
+                    if (ds.Tables[0].Rows.Count > 0)
                     {
-                        sql = string.Format("select a.*,b.stu_shichang from zxt_app.student_info a left join zxt_app.student_card b on a.self_18=b.stu_id where a.school_id='{0}' and a.self_18='{1}'", school, card);
-                        ds = db.ExecuteReturnDataSet(sql);
-                        if (ds.Tables[0].Rows.Count > 0)
+                        try
                         {
-                            DataRow dr = ds.Tables[0].Rows[0];
-                            context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}|{4}", card, dr["stu_shichang"], dr["stuinfo_id"], dr["stu_name"], dr["id_card_no"]));
+                            sql = string.Format("select a.*,b.stu_shichang from zxt_app.student_info a left join zxt_app.student_card b on a.self_18=b.stu_id where a.school_id='{0}' and a.self_18='{1}'", school, card);
+                            ds = db.ExecuteReturnDataSet(sql);
+                            if (ds.Tables[0].Rows.Count > 0)
+                            {
+                                DataRow dr = ds.Tables[0].Rows[0];
+                                string id_card_no = dr["ID_CARD_NO"].ToString();
+                                string driver_type = dr["DRIVER_TYPE"].ToString();
+                                if (string.IsNullOrEmpty(id_card_no))
+                                {
+                                    id_card_no = "无";
+                                }
+                                if (string.IsNullOrEmpty(driver_type))
+                                {
+                                    driver_type = "无";
+                                }
+                                context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}|{4}|{5}", card, dr["stu_shichang"], dr["stuinfo_id"], dr["stu_name"], id_card_no, driver_type));
+                            }
+                            else
+                            {
+                                context.Response.Write("f|学员身份验证失败");
+                            }
                         }
-                        else
+                        catch
                         {
-                            context.Response.Write("f|学员身份验证失败");
+                            context.Response.Write("f|数据库异常");
                         }
                     }
-                    catch
+                    else
                     {
-                        context.Response.Write("f|数据库异常");
+                        context.Response.Write("f|设备非法");
                     }
                 }
                 else
                 {
-                    context.Response.Write("f|设备非法");
+                    context.Response.Write("f|数据库异常");
                 }
-            }
-            else
-            {
-                context.Response.Write("f|数据库异常");
             }
         }
 
