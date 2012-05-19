@@ -17,7 +17,7 @@ namespace ZxtMobile
             {
                 string filename = System.Configuration.ConfigurationManager.AppSettings["photo"] + context.Request["id"] + ".bmp";
                 if (System.IO.File.Exists(filename))
-                {
+                {                    
                     //Bitmap result = new Bitmap(filename);
                     //context.Response.ContentType = "image/pjpeg";
                     //context.Response.AppendHeader("content-disposition", "filename=photo.jpg");

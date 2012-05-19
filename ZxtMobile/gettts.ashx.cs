@@ -28,18 +28,21 @@ namespace ZxtMobile
             {
                 ds = db.ExecuteReturnDataSet(sql);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("page:gettts.ashx;exception:" + ex.Message);
+            }
             if (ds != null && ds.Tables[0] != null)
             {
                 if (ds.Tables[0].Rows.Count > 0)
                 {
                     try
                     {
-                        sql = string.Format("select item_context from zxt_app.project3_itme where item_id=0 and item_context='{0}'", ver);
+                        sql = string.Format("select item_context from gmit_app.project3_itme where item_id=0 and item_context='{0}'", ver);
                         ds = db.ExecuteReturnDataSet(sql);
                         if (ds.Tables[0].Rows.Count == 0)
                         {
-                            sql = string.Format("select * from zxt_app.project3_itme order by item_id");
+                            sql = string.Format("select * from gmit_app.project3_itme order by item_id");
                             ds = db.ExecuteReturnDataSet(sql);
                             DataTable table = ds.Tables[0];
                             StringBuilder sb = new StringBuilder();
@@ -55,8 +58,9 @@ namespace ZxtMobile
                             context.Response.Write("s|");
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Logger.WriteLog("page:gettts.ashx;exception:" + ex.Message);
                         context.Response.Write("f|数据库异常");
                     }
                 }

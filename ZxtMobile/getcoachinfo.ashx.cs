@@ -32,14 +32,17 @@ namespace ZxtMobile
                 {
                     ds = db.ExecuteReturnDataSet(sql);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Logger.WriteLog("page:getcoachinfo.ashx;exception:" + ex.Message);
+                }
                 if (ds != null && ds.Tables[0] != null)
                 {
                     if (ds.Tables[0].Rows.Count > 0)
                     {
                         try
                         {
-                            sql = string.Format("select a.*,b.coach_time from zxt_app.coach_info a left join zxt_app.coach_card b on a.coach_id=b.coach_id where a.coach_school_id='{0}' and a.coach_id='{1}'", school, card);
+                            sql = string.Format("select a.*,b.coach_time from gmit_app.coach_info a left join gmit_app.coach_card b on a.coach_id=b.coach_id where a.coach_school_id='{0}' and a.coach_id='{1}'", school, card);
                             ds = db.ExecuteReturnDataSet(sql);
                             if (ds.Tables[0].Rows.Count > 0)
                             {
@@ -61,8 +64,9 @@ namespace ZxtMobile
                                 context.Response.Write("f|教练身份验证失败");
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            Logger.WriteLog("page:getcoachinfo.ashx;exception:" + ex.Message);
                             context.Response.Write("f|数据库异常");
                         }
                     }

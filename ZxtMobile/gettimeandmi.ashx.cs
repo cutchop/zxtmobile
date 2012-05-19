@@ -27,14 +27,17 @@ namespace ZxtMobile
             {
                 ds = db.ExecuteReturnDataSet(sql);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("page:gettimeandmi.ashx;exception:" + ex.Message);
+            }
             if (ds != null && ds.Tables[0] != null)
             {
                 if (ds.Tables[0].Rows.Count > 0)
                 {
                     try
                     {
-                        sql = string.Format("select sum(use_datetime) as usetime,sum(use_mi) as usemi from zxt_app.jx_use_data where card_id in (select self_18 from zxt_app.student_info where school_id='{0}' and stuinfo_id='{1}')", school, stuid);
+                        sql = string.Format("select sum(use_datetime) as usetime,sum(use_mi) as usemi from gmit_app.jx_use_data where card_id in (select self_18 from gmit_app.student_info where school_id='{0}' and stuinfo_id='{1}')", school, stuid);
                         ds = db.ExecuteReturnDataSet(sql);
                         if (ds.Tables[0].Rows.Count > 0)
                         {
@@ -46,8 +49,9 @@ namespace ZxtMobile
                             context.Response.Write("s|0|0");
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Logger.WriteLog("page:gettimeandmi.ashx;exception:" + ex.Message);
                         context.Response.Write("f|数据库异常");
                     }
                 }

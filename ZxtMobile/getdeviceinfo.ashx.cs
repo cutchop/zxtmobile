@@ -27,13 +27,16 @@ namespace ZxtMobile
                 {
                     IDataBase db = DBConfig.GetDBObjcet();
                     string sql = string.Format(@"select a.device_id,a.device_name,b.orgid,b.orgname from device_info a 
-                                    left join zxt_base.aorg b on a.belong_companyid=b.orgid where a.device_imei='{0}'", context.Request["imei"]);
+                                    left join gmit_base.aorg b on a.belong_companyid=b.orgid where a.device_imei='{0}'", context.Request["imei"]);
                     DataSet ds = null;
                     try
                     {
                         ds = db.ExecuteReturnDataSet(sql);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Logger.WriteLog("page:getdeviceinfo.ashx;exception:" + ex.Message);
+                    }
                     if (ds != null && ds.Tables[0] != null)
                     {
                         DataTable dt = ds.Tables[0];
@@ -53,8 +56,9 @@ namespace ZxtMobile
                                     context.Response.Write("failure|数据库异常");
                                 }
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Logger.WriteLog("page:getdeviceinfo.ashx;exception:" + ex.Message);
                                 context.Response.Write("failure|数据库异常");
                             }
                         }
