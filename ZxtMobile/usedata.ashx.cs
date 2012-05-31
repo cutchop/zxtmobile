@@ -26,12 +26,23 @@ namespace ZxtMobile
             string balance = context.Request["balance"];
             string startmi = context.Request["startmi"];
             string endmi = context.Request["endmi"];
+            string startsenmi = context.Request["startsenmi"];
+            string endsenmi = context.Request["endsenmi"];
             string subject = context.Request["subject"];
             string cardtype = "01";
             string usemi = "0";
+            string usesenmi = "0";
             try
             {
                 usemi = (int.Parse(endmi) - int.Parse(startmi)).ToString();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("page:usedata.ashx;exception:" + ex.Message);
+            }
+            try
+            {
+                usesenmi = (int.Parse(endsenmi) - int.Parse(startsenmi)).ToString();
             }
             catch (Exception ex)
             {
@@ -61,9 +72,9 @@ namespace ZxtMobile
                             cardtype = "02";
                         }
                         int min = (int)Math.Ceiling((DateTime.Parse(endtime) - DateTime.Parse(starttime)).TotalMinutes);
-                        sql = string.Format(@"insert into gmit_app.jx_use_data(id,school_id,card_id,coach_id,start_time,end_time,use_datetime,card_type,create_time,device_id,vehicleno,balance,group_id,group_name,begin_mi,end_mi,use_mi,use_price,subject,account_date) 
-                                    values('{0}','{1}','{2}','{3}',to_date('{4}','yyyy-mm-dd hh24:mi:ss'),to_date('{5}','yyyy-mm-dd hh24:mi:ss'),{6},'{7}',sysdate,'{8}','{9}',{10},'{11}','{12}',{13},{14},{15},{16},'{17}','{18}')"
-                            , guid, school, student, coach, starttime, endtime, min, cardtype, deviceID, dr["device_name"], balance, dr["orgid"], dr["orgname"], startmi, endmi, usemi, 2, subject, starttime.Substring(0, 10));
+                        sql = string.Format(@"insert into gmit_app.jx_use_data(id,school_id,card_id,coach_id,start_time,end_time,use_datetime,card_type,create_time,device_id,vehicleno,balance,group_id,group_name,begin_mi,end_mi,use_mi,use_price,subject,account_date,sen_begin_mi,sen_end_mi,sen_use_mi) 
+                                    values('{0}','{1}','{2}','{3}',to_date('{4}','yyyy-mm-dd hh24:mi:ss'),to_date('{5}','yyyy-mm-dd hh24:mi:ss'),{6},'{7}',sysdate,'{8}','{9}',{10},'{11}','{12}',{13},{14},{15},{16},'{17}','{18}',{19},{20},{21})"
+                            , guid, school, student, coach, starttime, endtime, min, cardtype, deviceID, dr["device_name"], balance, dr["orgid"], dr["orgname"], startmi, endmi, usemi, 2, subject, starttime.Substring(0, 10),startsenmi,endsenmi,usesenmi);
                         db.ExecuteNonQuery(sql);
                         if (cardtype == "01")
                         {
@@ -78,7 +89,7 @@ namespace ZxtMobile
                     }
                     catch (Exception ex)
                     {
-                        Logger.WriteLog("page:usedata.ashx;exception:" + ex.Message);
+                        Logger.WriteLog("page:usedata.ashx;exception:" + ex.Message + ";SQL:" + sql);
                         context.Response.Write("数据库异常");
                     }
                 }

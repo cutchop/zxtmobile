@@ -34,6 +34,15 @@ namespace ZxtMobile
             {
                 lat = v_lat = 0;
             }
+            int senspeed = 0;
+            try
+            {
+                senspeed = int.Parse(context.Request["senspeed"]);
+            }
+            catch
+            {
+                senspeed = 0;
+            }
             string speed = context.Request["speed"];
             string mode = context.Request["mode"];
             string coach = context.Request["coach"];
@@ -51,7 +60,7 @@ namespace ZxtMobile
             }
             catch(Exception ex)
             {
-                Logger.WriteLog("page:upload.ashx;exception:" + ex.Message);
+                Logger.WriteLog("page:upload.ashx;exception:" + ex.Message + ";SQL:" + sql);
             }
             if (ds != null && ds.Tables[0] != null)
             {
@@ -61,14 +70,13 @@ namespace ZxtMobile
                     {
                         if (lng == 0 && lat == 0)//没有经纬度时使用上一次的值
                         {
-                            sql = string.Format("insert into device_his_track(device_id,lon,lat,v_lon,v_lat,speed,logintime) select device_id,lon,lat,v_lon,v_lat,speed,sysdate as logintime from device_state where device_id='{0}'", deviceID);
+                            sql = string.Format("insert into device_his_track(device_id,lon,lat,v_lon,v_lat,speed,sen_speed,logintime) select device_id,lon,lat,v_lon,v_lat,speed,{0} as senspeed,sysdate as logintime from device_state where device_id='{1}'", senspeed, deviceID);
                             db.ExecuteNonQuery(sql);
-                            sql = string.Format("update device_state set logintime=sysdate,cur_dev_ip='{0}' where device_id='{1}'", context.Request.UserHostAddress, deviceID);
+                            sql = string.Format("update device_state set logintime=sysdate,cur_dev_ip='{0}',sen_speed={1} where device_id='{2}'", context.Request.UserHostAddress, senspeed, deviceID);
                             db.ExecuteNonQuery(sql);
                         }
                         else
                         {
-
                             sql = string.Format("select get_offsetx({0},{1}) from dual", lng, lat);
                             ds = db.ExecuteReturnDataSet(sql);
                             if (ds.Tables[0].Rows.Count > 0)
@@ -84,14 +92,14 @@ namespace ZxtMobile
                                 }
                                 catch { }
                             }
-                            sql = string.Format("insert into device_his_track(device_id,lon,lat,v_lon,v_lat,speed,logintime) values('{0}',{1},{2},{3},{4},{5},sysdate)", deviceID, lng, lat, v_lng, v_lat, speed);
+                            sql = string.Format("insert into device_his_track(device_id,lon,lat,v_lon,v_lat,speed,sen_speed,logintime) values('{0}',{1},{2},{3},{4},{5},{6},sysdate)", deviceID, lng, lat, v_lng, v_lat, speed, senspeed);
                             db.ExecuteNonQuery(sql);
                             string status = "行驶";
                             if (string.IsNullOrEmpty(speed) || speed.Equals("0"))
                             {
                                 status = "停车";
                             }
-                            sql = string.Format("update device_state set lon={0},lat={1},v_lon={2},v_lat={3},speed={4},logintime=sysdate,device_status='{5}',cur_status='{6}',cur_dev_ip='{7}' where device_id='{8}'", lng, lat, v_lng, v_lat, speed, "正常", status, context.Request.UserHostAddress, deviceID);
+                            sql = string.Format("update device_state set lon={0},lat={1},v_lon={2},v_lat={3},speed={4},sen_speed={5},logintime=sysdate,device_status='{6}',cur_status='{7}',cur_dev_ip='{8}' where device_id='{9}'", lng, lat, v_lng, v_lat, speed, senspeed, "正常", status, context.Request.UserHostAddress, deviceID);
                             db.ExecuteNonQuery(sql);
                         }
                         if (!string.IsNullOrEmpty(student))
@@ -112,14 +120,14 @@ namespace ZxtMobile
                             }
                             catch (Exception ex)
                             {
-                                Logger.WriteLog("page:upload.ashx;exception:" + ex.Message);
+                                Logger.WriteLog("page:upload.ashx;exception:" + ex.Message + ";SQL:" + sql);
                             }
                         }
-                        context.Response.Write("success");
+                        context.Response.Write("s");
                     }
                     catch (Exception ex)
                     {
-                        Logger.WriteLog("page:upload.ashx;exception:" + ex.Message);
+                        Logger.WriteLog("page:upload.ashx;exception:" + ex.Message + ";SQL:" + sql);
                         context.Response.Write("数据库异常" + sql);
                     }
                 }

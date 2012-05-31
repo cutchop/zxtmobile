@@ -28,7 +28,7 @@ namespace ZxtMobile
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteLog("page:photoupload.ashx;exception:" + ex.Message);
+                    Logger.WriteLog("page:photoupload.ashx;exception:" + ex.Message + ";SQL:" + sql);
                 }
                 if (ds != null && ds.Tables[0] != null && ds.Tables[0].Rows.Count == 0)
                 {
@@ -49,12 +49,18 @@ namespace ZxtMobile
                             speed = int.Parse(context.Request["speed"]);
                         }
                         catch { }
+                        int senspeed = 0;
+                        try
+                        {
+                            senspeed = int.Parse(context.Request["senspeed"]);
+                        }
+                        catch { }
                         string task_id = context.Request["guid"].Replace("null", "");
                         filename += ";";
                         sql = string.Format("update device_his_photo set file_name=file_name||'{0}'  where device_id='{1}' and logintime=to_date('{2}','yyyymmddhh24miss')", filename, deviceID, filename.Substring(0, 14));
                         if (db.ExecuteNonQuery(sql) == 0)
                         {
-                            sql = string.Format("insert into device_his_photo(device_id, logintime, ph_type, file_name, file_url, task_id, speed) values('{0}',to_date('{1}','yyyymmddhh24miss'),0,'{2}','{3}','{4}',{5})", deviceID, filename.Substring(0, 14), filename, path, task_id, speed);
+                            sql = string.Format("insert into device_his_photo(device_id, logintime, ph_type, file_name, file_url, task_id, speed, sen_speed) values('{0}',to_date('{1}','yyyymmddhh24miss'),0,'{2}','{3}','{4}',{5},{6})", deviceID, filename.Substring(0, 14), filename, path, task_id, speed, senspeed);
                             db.ExecuteNonQuery(sql);
                         }
                         context.Response.Write("s");

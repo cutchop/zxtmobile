@@ -31,7 +31,7 @@ namespace ZxtMobile
             }
             catch (Exception ex)
             {
-                Logger.WriteLog("page:blindspot.ashx;exception:" + ex.Message);
+                Logger.WriteLog("page:blindspot.ashx;exception:" + ex.Message + ";SQL:" + sql);
             }
             if (ds != null && ds.Tables[0] != null)
             {
@@ -45,7 +45,7 @@ namespace ZxtMobile
                     }
                     catch (Exception ex)
                     {
-                        Logger.WriteLog("page:blindspot.ashx;exception:" + ex.Message);
+                        Logger.WriteLog("page:blindspot.ashx;exception:" + ex.Message + ";SQL:" + sql);
                         context.Response.Write("数据库异常");
                     }
                 }
