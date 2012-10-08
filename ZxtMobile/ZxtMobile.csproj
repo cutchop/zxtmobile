@@ -42,6 +42,7 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="scsfzzp.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -65,11 +66,17 @@
     <Compile Include="getdeviceinfo.ashx.cs">
       <DependentUpon>getdeviceinfo.ashx</DependentUpon>
     </Compile>
+    <Compile Include="getfinger.ashx.cs">
+      <DependentUpon>getfinger.ashx</DependentUpon>
+    </Compile>
     <Compile Include="getstudentinfo.ashx.cs">
       <DependentUpon>getstudentinfo.ashx</DependentUpon>
     </Compile>
     <Compile Include="gettts.ashx.cs">
       <DependentUpon>gettts.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="idcardphotoupload.ashx.cs">
+      <DependentUpon>idcardphotoupload.ashx</DependentUpon>
     </Compile>
     <Compile Include="Logger.cs" />
     <Compile Include="photo.ashx.cs">
@@ -80,8 +87,18 @@
       <DependentUpon>photoupload.ashx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="scsfzzp.aspx.cs">
+      <DependentUpon>scsfzzp.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="scsfzzp.aspx.designer.cs">
+      <DependentUpon>scsfzzp.aspx</DependentUpon>
+    </Compile>
     <Compile Include="test.ashx.cs">
       <DependentUpon>test.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="trainphoto.ashx.cs">
+      <DependentUpon>trainphoto.ashx</DependentUpon>
     </Compile>
     <Compile Include="upload.ashx.cs">
       <DependentUpon>upload.ashx</DependentUpon>
@@ -98,6 +115,18 @@
     </Compile>
     <Compile Include="gettimeandmi.ashx.cs">
       <DependentUpon>gettimeandmi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="fingerupload.ashx.cs">
+      <DependentUpon>fingerupload.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="gettime.ashx.cs">
+      <DependentUpon>gettime.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="log.ashx.cs">
+      <DependentUpon>log.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="logupload.ashx.cs">
+      <DependentUpon>logupload.ashx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +161,27 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="photoupload.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fingerupload.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="getfinger.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="trainphoto.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="idcardphotoupload.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="gettime.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="log.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="logupload.ashx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

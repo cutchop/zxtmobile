@@ -39,7 +39,7 @@ namespace ZxtMobile
                 {
                     try
                     {
-                        sql = string.Format("insert into device_his_track(device_id,lon,lat,v_lon,v_lat,speed,logintime) values('{0}',{1},{2},{3},{4},{5},to_date('{6}','yyyy-mm-dd hh24:mi:ss'))", deviceID, lng, lat, lng, lat, speed, gpstime);
+                        sql = string.Format("insert into lbshis_{0}.device_his_track_{1}(device_id,lon,lat,v_lon,v_lat,speed,logintime) values('{2}',{3},{4},{5},{6},{7},to_date('{8}','yyyy-mm-dd hh24:mi:ss'))", gpstime.Substring(0, 10).Replace("-", ""), deviceID.Substring(deviceID.Length - 2), deviceID, lng, lat, lng, lat, speed, gpstime);
                         db.ExecuteNonQuery(sql);
                         context.Response.Write("s");
                     }

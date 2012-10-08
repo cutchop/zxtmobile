@@ -26,8 +26,9 @@ namespace ZxtMobile
                 else
                 {
                     IDataBase db = DBConfig.GetDBObjcet();
-                    string sql = string.Format(@"select a.device_id,a.device_name,b.orgid,b.orgname from device_info a 
-                                    left join gmit_base.aorg b on a.belong_companyid=b.orgid where a.device_imei='{0}'", context.Request["imei"]);
+                    string sql = string.Format(@"select a.device_id,a.device_name,b.orgid,b.orgname,a.jdq_type,a.camera,a.sensor_para,a.gps_sped_para,c.orgname as groupname from device_info a 
+                    left join gmit_base.aorg b on a.belong_companyid=b.orgid
+                    left join gmit_base.aorg c on a.belong_groupid=c.orgid where a.device_imei='{0}'", context.Request["imei"]);
                     DataSet ds = null;
                     try
                     {
@@ -49,7 +50,33 @@ namespace ZxtMobile
                             {
                                 if (db.ExecuteNonQuery(sql) > 0)
                                 {
-                                    context.Response.Write(string.Format("success|{0}|{1}|{2}|{3}|{4}", guid, dr["device_id"], dr["device_name"], dr["orgid"], dr["orgname"]));
+                                    try
+                                    {
+                                        sql = string.Format("insert into device_work_log(device_id,log_type,device_imei) values('{0}','设备启动','{1}')", dr["device_id"], context.Request["imei"]);
+                                        db.ExecuteNonQuery(sql);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Logger.WriteLog("page:getdeviceinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
+                                        //context.Response.Write("failure|数据库异常"); 
+                                    }
+                                    string subject_para = "";
+                                    try
+                                    {
+                                        sql = "select * from gmit_app.subject_para where subject=2 or subject=3 order by subject";
+                                        DataTable spdt = db.ExecuteReturnDataSet(sql).Tables[0];
+                                        subject_para += spdt.Rows[0]["sub_min_time"] + ",";
+                                        subject_para += spdt.Rows[0]["sub_max_time"] + ",";
+                                        subject_para += spdt.Rows[0]["day_max_time"] + ",";
+                                        subject_para += spdt.Rows[1]["sub_min_time"] + ",";
+                                        subject_para += spdt.Rows[1]["sub_max_time"] + ",";
+                                        subject_para += spdt.Rows[1]["day_max_time"];
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Logger.WriteLog("page:getdeviceinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
+                                    }
+                                    context.Response.Write(string.Format("success|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}", guid, dr["device_id"], dr["device_name"], dr["orgid"], dr["orgname"], dr["jdq_type"], dr["camera"], dr["sensor_para"], dr["gps_sped_para"], subject_para, dr["groupname"]));
                                 }
                                 else
                                 {

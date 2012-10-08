@@ -13,72 +13,142 @@ namespace ZxtMobile
 
         public void ProcessRequest(HttpContext context)
         {
-            context.Response.ContentType = "text/plain";
-            if (context.Request["ver"] != System.Configuration.ConfigurationManager.AppSettings["apkVersion"])
+            if (context.Request["action"] == "checkfinger")
             {
-                context.Response.Write("version_error");
+                if (string.IsNullOrEmpty(context.Request["card"]))
+                {
+                    context.Response.Write("1");
+                }
+                else
+                {
+                    checkfinger(context);
+                }
             }
             else
             {
-                string deviceID = context.Request["deviceid"];
-                string session = context.Request["session"];
-                string card = context.Request["card"];
-                string school = context.Request["school"];
+                context.Response.ContentType = "text/plain";
+                if (context.Request["ver"] != System.Configuration.ConfigurationManager.AppSettings["apkVersion"])
+                {
+                    context.Response.Write("version_error");
+                }
+                else
+                {
+                    getinfo(context);
+                }
+            }
+        }
 
-                IDataBase db = DBConfig.GetDBObjcet();
-                string sql = string.Format("select * from device_info where device_id='{0}' and device_session='{1}'", deviceID, session);
-                DataSet ds = null;
-                try
+
+        private void checkfinger(HttpContext context)
+        {
+            string sql = string.Format("select check_finger,finger_get_flag from gmit_app.coach_info where coach_id='{0}'", context.Request["card"]);
+            DataSet ds = null;
+            IDataBase db = DBConfig.GetDBObjcet();
+            try
+            {
+                ds = db.ExecuteReturnDataSet(sql);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("page:getcoachtinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
+            }
+            if (ds != null && ds.Tables[0] != null)
+            {
+                if (ds.Tables[0].Rows.Count > 0)
                 {
-                    ds = db.ExecuteReturnDataSet(sql);
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteLog("page:getcoachinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
-                }
-                if (ds != null && ds.Tables[0] != null)
-                {
-                    if (ds.Tables[0].Rows.Count > 0)
+                    if (ds.Tables[0].Rows[0]["check_finger"].ToString() == "1")
                     {
-                        try
+                        if (ds.Tables[0].Rows[0]["finger_get_flag"].ToString() == "0")
                         {
-                            sql = string.Format("select a.*,b.coach_time from gmit_app.coach_info a left join gmit_app.coach_card b on a.coach_id=b.coach_id where a.coach_school_id='{0}' and a.coach_id='{1}'", school, card);
-                            ds = db.ExecuteReturnDataSet(sql);
-                            if (ds.Tables[0].Rows.Count > 0)
-                            {
-                                DataRow dr = ds.Tables[0].Rows[0];
-                                string id_card_no = dr["ID_CARD_NO"].ToString();
-                                string certificate = dr["CERTIFICATE_ID"].ToString();
-                                if (string.IsNullOrEmpty(id_card_no))
-                                {
-                                    id_card_no = "无";
-                                }
-                                if (string.IsNullOrEmpty(certificate))
-                                {
-                                    certificate = "无";
-                                }
-                                context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}|{4}|{5}", card, dr["coach_time"], dr["code"], dr["name"], id_card_no, certificate));
-                            }
-                            else
-                            {
-                                context.Response.Write("f|教练身份验证失败");
-                            }
+                            context.Response.Write("2");//需要下载并验证指纹
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            Logger.WriteLog("page:getcoachinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
-                            context.Response.Write("f|数据库异常");
+                            context.Response.Write("1");
                         }
                     }
                     else
                     {
-                        context.Response.Write("f|设备非法");
+                        context.Response.Write("0");
                     }
                 }
                 else
                 {
-                    context.Response.Write("f|数据库异常");
+                    context.Response.Write("1");
                 }
+            }
+            else
+            {
+                context.Response.Write("1");
+            }
+        }
+
+
+        private void getinfo(HttpContext context)
+        {
+            string deviceID = context.Request["deviceid"];
+            string session = context.Request["session"];
+            string card = context.Request["card"];
+            string school = context.Request["school"];
+
+            IDataBase db = DBConfig.GetDBObjcet();
+            string sql = string.Format("select * from device_info where device_id='{0}' and device_session='{1}'", deviceID, session);
+            DataSet ds = null;
+            try
+            {
+                ds = db.ExecuteReturnDataSet(sql);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("page:getcoachinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
+            }
+            if (ds != null && ds.Tables[0] != null)
+            {
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    try
+                    {
+                        sql = string.Format("select a.*,b.yue as coach_time,coach_status from gmit_app.coach_info a left join gmit_app.coach_yue b on a.code=b.code where a.coach_school_id='{0}' and a.coach_id='{1}'", school, card);
+                        ds = db.ExecuteReturnDataSet(sql);
+                        if (ds.Tables[0].Rows.Count > 0)
+                        {
+                            DataRow dr = ds.Tables[0].Rows[0];
+                            if (dr["coach_status"].ToString().Trim() != "正常")
+                            {
+                                context.Response.Write("f|教练不合格");
+                                return;
+                            }
+                            string id_card_no = dr["ID_CARD_NO"].ToString();
+                            string certificate = dr["CERTIFICATE_ID"].ToString();
+                            if (string.IsNullOrEmpty(id_card_no))
+                            {
+                                id_card_no = "无";
+                            }
+                            if (string.IsNullOrEmpty(certificate))
+                            {
+                                certificate = "无";
+                            }
+                            context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}|{4}|{5}", card, dr["coach_time"], dr["code"], dr["name"], id_card_no, certificate));
+                        }
+                        else
+                        {
+                            context.Response.Write("f|教练身份验证失败");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.WriteLog("page:getcoachinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
+                        context.Response.Write("f|数据库异常");
+                    }
+                }
+                else
+                {
+                    context.Response.Write("f|设备非法");
+                }
+            }
+            else
+            {
+                context.Response.Write("f|数据库异常");
             }
         }
 

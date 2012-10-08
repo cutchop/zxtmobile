@@ -22,6 +22,11 @@ namespace ZxtMobile
                     context.Response.ContentType = "image/pjpeg";
                     context.Response.WriteFile(filename);
                 }
+                else
+                {
+                    context.Response.ContentType = "image/pjpeg";
+                    context.Response.WriteFile(System.Configuration.ConfigurationManager.AppSettings["photo"] + "0.png");
+                }
             }
             catch { return; }
         }
