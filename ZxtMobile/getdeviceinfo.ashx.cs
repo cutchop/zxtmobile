@@ -26,7 +26,7 @@ namespace ZxtMobile
                 else
                 {
                     IDataBase db = DBConfig.GetDBObjcet();
-                    string sql = string.Format(@"select a.device_id,a.device_name,b.orgid,b.orgname,a.jdq_type,a.camera,a.sensor_para,a.gps_sped_para,c.orgname as groupname from device_info a 
+                    string sql = string.Format(@"select a.device_id,a.device_name,b.orgid,b.orgname,a.jdq_type,a.camera,a.sensor_para,a.gps_sped_para,c.orgname as groupname,a.up_fg_image from device_info a 
                     left join gmit_base.aorg b on a.belong_companyid=b.orgid
                     left join gmit_base.aorg c on a.belong_groupid=c.orgid where a.device_imei='{0}'", context.Request["imei"]);
                     DataSet ds = null;
@@ -76,7 +76,7 @@ namespace ZxtMobile
                                     {
                                         Logger.WriteLog("page:getdeviceinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
                                     }
-                                    context.Response.Write(string.Format("success|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}", guid, dr["device_id"], dr["device_name"], dr["orgid"], dr["orgname"], dr["jdq_type"], dr["camera"], dr["sensor_para"], dr["gps_sped_para"], subject_para, dr["groupname"]));
+                                    context.Response.Write(string.Format("success|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}", guid, dr["device_id"], dr["device_name"], dr["orgid"], dr["orgname"], dr["jdq_type"], dr["camera"], dr["sensor_para"], dr["gps_sped_para"], subject_para, dr["groupname"], dr["up_fg_image"]));
                                 }
                                 else
                                 {

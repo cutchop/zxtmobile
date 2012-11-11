@@ -155,7 +155,7 @@ namespace ZxtMobile
                         {
                             try
                             {
-                                sql = string.Format("update gmit_app.jx_device_status set last_update_time=sysdate,cur_stu_ic_id='',cur_stu_starttime=null,cur_stu_balance=null where device_id='{0}'", deviceID);
+                                sql = string.Format("update gmit_app.jx_device_status set mode_type='{0}',last_update_time=sysdate,cur_stu_ic_id='',cur_stu_starttime=null,cur_stu_balance=null where device_id='{1}'", mode == "1" ? "非计费模式" : "计费模式" , deviceID);
                                 db.ExecuteNonQuery(sql);
                             }
                             catch (Exception ex)

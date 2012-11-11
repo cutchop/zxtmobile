@@ -39,36 +39,62 @@ namespace ZxtMobile
                     HttpPostedFile file = context.Request.Files[0];
                     if (file.ContentLength > 0)
                     {
-                        try
+                        if (context.Request["f"] != "t")
                         {
-                            string filename = context.Request["filename"];
-                            string path = System.Configuration.ConfigurationManager.AppSettings["photosave"] + filename.Substring(0, 8) + "/" + deviceID + "/";
-                            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                            file.SaveAs(path + filename);
-                            int speed = 0;
                             try
                             {
-                                speed = int.Parse(context.Request["speed"]);
+                                string filename = context.Request["filename"];
+                                string path = System.Configuration.ConfigurationManager.AppSettings["photosave"] + filename.Substring(0, 8) + "/" + deviceID + "/";
+                                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                                file.SaveAs(path + filename);
+                                int speed = 0;
+                                try
+                                {
+                                    speed = int.Parse(context.Request["speed"]);
+                                }
+                                catch { }
+                                int senspeed = 0;
+                                try
+                                {
+                                    senspeed = int.Parse(context.Request["senspeed"]);
+                                }
+                                catch { }
+                                string task_id = context.Request["guid"].Replace("null", "");
+                                filename += ";";
+                                sql = string.Format("update device_his_photo set file_name=file_name||'{0}'  where device_id='{1}' and logintime=to_date('{2}','yyyymmddhh24miss')", filename, deviceID, filename.Substring(0, 14));
+                                if (db.ExecuteNonQuery(sql) == 0)
+                                {
+                                    sql = string.Format("insert into device_his_photo(device_id, logintime, ph_type, file_name, file_url, task_id, speed, sen_speed) values('{0}',to_date('{1}','yyyymmddhh24miss'),0,'{2}','{3}','{4}',{5},{6})", deviceID, filename.Substring(0, 14), filename, path, task_id, speed, senspeed);
+                                    db.ExecuteNonQuery(sql);
+                                }
                             }
-                            catch { }
-                            int senspeed = 0;
-                            try
+                            catch (Exception ex)
                             {
-                                senspeed = int.Parse(context.Request["senspeed"]);
-                            }
-                            catch { }
-                            string task_id = context.Request["guid"].Replace("null", "");
-                            filename += ";";
-                            sql = string.Format("update device_his_photo set file_name=file_name||'{0}'  where device_id='{1}' and logintime=to_date('{2}','yyyymmddhh24miss')", filename, deviceID, filename.Substring(0, 14));
-                            if (db.ExecuteNonQuery(sql) == 0)
-                            {
-                                sql = string.Format("insert into device_his_photo(device_id, logintime, ph_type, file_name, file_url, task_id, speed, sen_speed) values('{0}',to_date('{1}','yyyymmddhh24miss'),0,'{2}','{3}','{4}',{5},{6})", deviceID, filename.Substring(0, 14), filename, path, task_id, speed, senspeed);
-                                db.ExecuteNonQuery(sql);
+                                Logger.WriteLog(ex.Message + "---sql:" + sql);
                             }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            Logger.WriteLog(ex.Message + "---sql:" + sql);
+                            string cardno = context.Request["card"];
+                            string filename = context.Request["filename"];
+                            string path = System.Configuration.ConfigurationManager.AppSettings["fingerimage"];                            
+                            sql = string.Format("update gmit_app.student_info set finger_get_photo='{0}' where self_18='{1}'", path + cardno + ".jpg", cardno);
+                            if (context.Request["t"] == "1")
+                            {
+                                path += "coach/";
+                                sql = string.Format("update gmit_app.coach_info set finger_get_photo='{0}' where coach_id='{1}'", path + cardno + ".jpg", cardno);
+                            }
+                            path = path + cardno.Substring(6) + "/";
+                            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                            file.SaveAs(path + cardno +  ".jpg");                            
+                            try
+                            {
+                                db.ExecuteNonQuery(sql);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.WriteLog(ex.Message + "---sql:" + sql);
+                            }
                         }
                     }
                     context.Response.Write("s");

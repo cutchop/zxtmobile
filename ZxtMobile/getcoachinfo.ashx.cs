@@ -108,7 +108,7 @@ namespace ZxtMobile
                 {
                     try
                     {
-                        sql = string.Format("select a.*,b.yue as coach_time,coach_status from gmit_app.coach_info a left join gmit_app.coach_yue b on a.code=b.code where a.coach_school_id='{0}' and a.coach_id='{1}'", school, card);
+                        sql = string.Format("select a.*,b.yue as coach_time from gmit_app.coach_info a left join gmit_app.coach_yue b on a.code=b.code where a.coach_school_id='{0}' and a.coach_id='{1}'", school, card);
                         ds = db.ExecuteReturnDataSet(sql);
                         if (ds.Tables[0].Rows.Count > 0)
                         {
@@ -128,7 +128,25 @@ namespace ZxtMobile
                             {
                                 certificate = "无";
                             }
-                            context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}|{4}|{5}", card, dr["coach_time"], dr["code"], dr["name"], id_card_no, certificate));
+                            string monthtime, daytime;
+                            monthtime = daytime = "0";
+                            try
+                            {
+                                // 当月学时
+                                sql = string.Format(@"select nvl(sum(use_datetime),0) as ttime 
+                                    from gmit_app.jx_use_data where school_id='{0}' and card_type='02' and coach_id='{1}'", school, card);
+                                DataTable table = db.ExecuteReturnDataSet(sql + " and to_char(start_time,'yyyymm')=to_char(sysdate,'yyyymm')").Tables[0];
+                                monthtime = table.Rows[0]["ttime"].ToString();
+                                // 当日学时
+                                sql += " and to_char(start_time,'yyyymmdd')=to_char(sysdate,'yyyymmdd')";
+                                table = db.ExecuteReturnDataSet(sql).Tables[0];
+                                daytime = table.Rows[0]["ttime"].ToString();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.WriteLog("page:getstudentinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
+                            }
+                            context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8},{9}", card, dr["coach_time"], dr["code"], dr["name"], id_card_no, certificate, dr["is_charging"], dr["coach_level"], monthtime, daytime));
                         }
                         else
                         {

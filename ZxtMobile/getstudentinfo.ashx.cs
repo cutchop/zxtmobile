@@ -164,17 +164,29 @@ namespace ZxtMobile
                             {
                                 Logger.WriteLog("page:getstudentinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
                             }
-                            string todaytotal = "0";
+                            string totaltime, totalmi, daytime, daymi;
+                            totaltime = totalmi = daytime = daymi = "0";
                             try
                             {
-                                sql = string.Format("select nvl(sum(use_datetime),0) as todaytotal from gmit_app.jx_use_data where card_id='{0}' and to_char(start_time,'yyyymmdd')=to_char(sysdate,'yyyymmdd')", card);
-                                todaytotal = db.ExecuteReturnDataSet(sql).Tables[0].Rows[0][0].ToString();
+                                // 累计学时和里程
+                                sql = string.Format(@"select nvl(sum(use_datetime),0) as totaltime,nvl(sum(use_mi),0) as totalmi from gmit_app.jx_use_data where school_id='{0}' and card_type='02' and card_id in 
+                                    (select stu_id from gmit_app.student_card where stu_code=(select stuinfo_id from gmit_app.student_info where school_id='{0}' and self_18='{1}'))",school,card);
+                                DataTable table = db.ExecuteReturnDataSet(sql).Tables[0];
+                                totaltime = table.Rows[0]["totaltime"].ToString();
+                                totalmi = table.Rows[0]["totalmi"].ToString();
+                                // 当日学时和里程
+                                sql = string.Format(@"select nvl(sum(use_datetime),0) as daytime,nvl(sum(use_mi),0) as daymi from gmit_app.jx_use_data where school_id='{0}' and card_type='02' and card_id in 
+                                    (select stu_id from gmit_app.student_card where stu_code=(select stuinfo_id from gmit_app.student_info where school_id='{0}' and self_18='{1}'))
+                                    and to_char(start_time,'yyyymmdd')=to_char(sysdate,'yyyymmdd')",school, card);
+                                table = db.ExecuteReturnDataSet(sql).Tables[0];
+                                daytime = table.Rows[0]["daytime"].ToString();
+                                daymi = table.Rows[0]["daymi"].ToString();
                             }
                             catch (Exception ex)
                             {
                                 Logger.WriteLog("page:getstudentinfo.ashx;exception:" + ex.Message + ";SQL:" + sql);
                             }
-                            context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}", card, dr["stu_shichang"], dr["stuinfo_id"], dr["stu_name"], id_card_no, driver_type, todaytotal, dr["sub"]));
+                            context.Response.Write(string.Format("s|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9},{10},{11},{12}|{13}", card, dr["stu_shichang"], dr["stuinfo_id"], dr["stu_name"], id_card_no, driver_type, daytime, dr["sub"], dr["is_charging"], totaltime, totalmi, daytime, daymi, dr["exam_status"]));
                         }
                         else
                         {
