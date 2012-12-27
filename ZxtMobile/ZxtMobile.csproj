@@ -69,12 +69,18 @@
     <Compile Include="blindspot.ashx.cs">
       <DependentUpon>blindspot.ashx</DependentUpon>
     </Compile>
+    <Compile Include="examversion.ashx.cs">
+      <DependentUpon>examversion.ashx</DependentUpon>
+    </Compile>
     <Compile Include="fence.aspx.cs">
       <DependentUpon>fence.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="fence.aspx.designer.cs">
       <DependentUpon>fence.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="fencedel.ashx.cs">
+      <DependentUpon>fencedel.ashx</DependentUpon>
     </Compile>
     <Compile Include="fenceedit.ashx.cs">
       <DependentUpon>fenceedit.ashx</DependentUpon>
@@ -213,6 +219,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="fenceedit.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fencedel.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="examversion.ashx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

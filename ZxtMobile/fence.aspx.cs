@@ -27,13 +27,14 @@ namespace ZxtMobile
                     for (int i = 0; i < dt.Rows.Count;i++ )
                     {
                         sb.AppendFormat("fences[{0}] = new Array();",i);
-                        sb.AppendFormat("fences[{0}].id = \"{1}\";", i,dt.Rows[i]["id"]);
+                        sb.AppendFormat("fences[{0}].id = \"{1}\";", i, dt.Rows[i]["id"]);
+                        sb.AppendFormat("fences[{0}].name = \"{1}\";", i, dt.Rows[i]["ba_name"]);
                         sb.AppendFormat("fences[{0}].type = \"{1}\";",i, dt.Rows[i]["ba_type"]);
                         if (dt.Rows[i]["ba_type"].ToString() != "1")
                         {
                             sb.AppendFormat("fences[{0}].arr = new Array();", i);
                         }
-                        sql = "select * from user_barrier_detail where id=" + dt.Rows[i]["id"];
+                        sql = "select * from user_barrier_detail where id=" + dt.Rows[i]["id"]+" order by line";
                         dt2 = db.ExecuteReturnDataSet(sql).Tables[0];
                         for (int j= 0; j < dt2.Rows.Count; j++)
                         {

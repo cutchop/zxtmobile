@@ -33,7 +33,7 @@ namespace ZxtMobile
                         db.ExecuteNonQuery(sql);
                         sql = string.Format("insert into user_barrier_detail(id,line,lon,lat) values({0},1,{1},{2})",id,lon,lat);
                         db.ExecuteNonQuery(sql);
-                        context.Response.Write("s");
+                        context.Response.Write("s:"+id);
                     }
                     catch (Exception ex)
                     {
@@ -58,7 +58,7 @@ namespace ZxtMobile
                             sql = string.Format("insert into user_barrier_detail(id,line,lon,lat) values({0},{1},{2},{3})", id, i / 2 + 1, arr[i], arr[++i]);
                             db.ExecuteNonQuery(sql);
                         }
-                        context.Response.Write("s");
+                        context.Response.Write("s:" + id);
                     }
                     catch (Exception ex)
                     {
@@ -83,7 +83,7 @@ namespace ZxtMobile
                             sql = string.Format("insert into user_barrier_detail(id,line,lon,lat) values({0},{1},{2},{3})", id, i / 2 + 1, arr[i], arr[++i]);
                             db.ExecuteNonQuery(sql);
                         }
-                        context.Response.Write("s");
+                        context.Response.Write("s:" + id);
                     }
                     catch (Exception ex)
                     {
